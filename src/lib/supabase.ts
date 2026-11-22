@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { Product, QuoteRequest, StatItem } from '@/types';
-import { initialProducts, initialStats } from './mock-data';
+import { Product, QuoteRequest, StatItem, GalleryItem } from '@/types';
+import { initialProducts, initialStats, initialGallery } from './mock-data';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -19,7 +19,9 @@ export const supabase = isSupabaseConfigured
 // Local fallback store using localStorage for when Supabase is not yet connected
 const LOCAL_STORAGE_PRODUCTS_KEY = 'fishline_products';
 const LOCAL_STORAGE_QUOTES_KEY = 'fishline_quotes';
-const LOCAL_STORAGE_STATS_KEY = 'fishline_stats';
+const LOCAL_STORAGE_GALLERY_KEY = 'fishline_gallery';
+
+// ---------------- PRODUCTS ----------------
 
 export async function getProducts(): Promise<Product[]> {
   if (isSupabaseConfigured && supabase) {
@@ -88,6 +90,86 @@ export async function deleteProduct(productId: string): Promise<boolean> {
   }
   return true;
 }
+
+// ---------------- GALLERY & PHOTOS ----------------
+
+export async function getGalleryImages(): Promise<GalleryItem[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) return data as GalleryItem[];
+    } catch (e) {
+      console.warn("Supabase fetch gallery failed, falling back to local:", e);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const cached = localStorage.getItem(LOCAL_STORAGE_GALLERY_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+  return initialGallery;
+}
+
+export async function saveGalleryImage(item: GalleryItem): Promise<GalleryItem> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('gallery').upsert(item).select().single();
+      if (!error && data) return data as GalleryItem;
+    } catch (e) {
+      console.warn("Supabase upsert gallery failed:", e);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const cached = localStorage.getItem(LOCAL_STORAGE_GALLERY_KEY);
+    let list: GalleryItem[] = cached ? JSON.parse(cached) : [...initialGallery];
+    const index = list.findIndex(g => g.id === item.id);
+    if (index >= 0) {
+      list[index] = item;
+    } else {
+      list.unshift(item);
+    }
+    localStorage.setItem(LOCAL_STORAGE_GALLERY_KEY, JSON.stringify(list));
+  }
+  return item;
+}
+
+export async function deleteGalleryImage(id: string): Promise<boolean> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase.from('gallery').delete().eq('id', id);
+      if (!error) return true;
+    } catch (e) {
+      console.warn("Supabase delete gallery failed:", e);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const cached = localStorage.getItem(LOCAL_STORAGE_GALLERY_KEY);
+    let list: GalleryItem[] = cached ? JSON.parse(cached) : [...initialGallery];
+    list = list.filter(g => g.id !== id);
+    localStorage.setItem(LOCAL_STORAGE_GALLERY_KEY, JSON.stringify(list));
+  }
+  return true;
+}
+
+// Helper to convert an uploaded image file into an optimized Data URL
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+// ---------------- QUOTES (RFQ) ----------------
 
 export async function submitQuote(quote: QuoteRequest): Promise<boolean> {
   const quoteWithDate = {

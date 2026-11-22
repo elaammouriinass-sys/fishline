@@ -1,4 +1,4 @@
-import { Product, StatItem } from "@/types";
+import { Product, StatItem, GalleryItem } from "@/types";
 
 export const initialProducts: Product[] = [
   {
@@ -182,35 +182,49 @@ export const initialStats: StatItem[] = [
   }
 ];
 
-export const galleryImages = [
+export const initialGallery: GalleryItem[] = [
   {
+    id: "gal-1",
     url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     title_fr: "Les Eaux Pures de l'Atlantique Marocain",
     title_ar: "مياه الأطلسي المغربي النقية",
+    category: "Océan & Côtes",
   },
   {
+    id: "gal-2",
     url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80",
     title_fr: "Débarquement Quotidien dans les Ports Marocains",
     title_ar: "وصول يومي للمراكب بالموانئ المغربية",
+    category: "Ports & Bateaux",
   },
   {
+    id: "gal-3",
     url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
     title_fr: "Sélection & Calibrage Rigoureux",
     title_ar: "فرز وتدريج دقيق للأسماك",
+    category: "Transformation",
   },
   {
+    id: "gal-4",
     url: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80",
     title_fr: "Unités de Surgélation Industrielle -18°C",
     title_ar: "وحدات التجميد الصناعي فائق التبريد",
+    category: "Chambres Froides",
   },
   {
+    id: "gal-5",
     url: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
     title_fr: "Conditionnement International pour l'Export",
     title_ar: "تعبئة وتغليف وفق المعايير العالمية",
+    category: "Conditionnement",
   },
   {
+    id: "gal-6",
     url: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80",
     title_fr: "Expéditions Frigorifiques Maritimes & Aériennes",
     title_ar: "شحن بحري وجوي بحاويات مبردة",
+    category: "Logistique & Fret",
   }
 ];
+
+export const galleryImages = initialGallery;

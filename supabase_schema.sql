@@ -24,7 +24,17 @@ CREATE TABLE IF NOT EXISTS public.products (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. Table des demandes de devis B2B (RFQ)
+-- 2. Table de la galerie & médiathèque de photos
+CREATE TABLE IF NOT EXISTS public.gallery (
+    id TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    title_fr TEXT NOT NULL,
+    title_ar TEXT,
+    category TEXT DEFAULT 'Galerie',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 3. Table des demandes de devis B2B (RFQ)
 CREATE TABLE IF NOT EXISTS public.quotes (
     id TEXT PRIMARY KEY,
     company_name TEXT NOT NULL,
@@ -41,13 +51,18 @@ CREATE TABLE IF NOT EXISTS public.quotes (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Activation de la sécurité Row Level Security (RLS)
+-- 4. Activation de la sécurité Row Level Security (RLS)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.gallery ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.quotes ENABLE ROW LEVEL SECURITY;
 
--- 4. Politiques RLS (Lecture publique des produits, Insertion publique des devis)
+-- 5. Politiques RLS (Lecture publique, modifications autorisées)
 CREATE POLICY "Lecture publique des produits" 
     ON public.products FOR SELECT 
+    USING (true);
+
+CREATE POLICY "Lecture publique de la galerie" 
+    ON public.gallery FOR SELECT 
     USING (true);
 
 CREATE POLICY "Écriture publique des devis" 
@@ -56,6 +71,10 @@ CREATE POLICY "Écriture publique des devis"
 
 CREATE POLICY "Admin full access products" 
     ON public.products FOR ALL 
+    USING (true);
+
+CREATE POLICY "Admin full access gallery" 
+    ON public.gallery FOR ALL 
     USING (true);
 
 CREATE POLICY "Admin full access quotes" 

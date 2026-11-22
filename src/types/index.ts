@@ -19,6 +19,15 @@ export interface Product {
   created_at?: string;
 }
 
+export interface GalleryItem {
+  id: string;
+  url: string;
+  title_fr: string;
+  title_ar: string;
+  category?: string;
+  created_at?: string;
+}
+
 export interface QuoteRequest {
   id?: string;
   company_name: string;

@@ -1,13 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "./LanguageContext";
-import { galleryImages } from "@/lib/mock-data";
+import { getGalleryImages } from "@/lib/supabase";
+import { GalleryItem } from "@/types";
 import { Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function GallerySection() {
   const { t, language } = useLanguage();
+  const [images, setImages] = useState<GalleryItem[]>([]);
+
+  useEffect(() => {
+    getGalleryImages().then(setImages);
+  }, []);
 
   return (
     <section id="galerie" className="py-24 relative">
@@ -27,9 +33,9 @@ export default function GallerySection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleryImages.map((img, idx) => (
+          {images.map((img, idx) => (
             <motion.div
-              key={idx}
+              key={img.id || idx}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -48,7 +54,7 @@ export default function GallerySection() {
                   {language === 'ar' ? img.title_ar : img.title_fr}
                 </span>
                 <span className="text-[10px] text-cyanCustom-300 block">
-                  Fishline Maroc • Industrie Halieutique
+                  {img.category || "Fishline Maroc • Industrie Halieutique"}
                 </span>
               </div>
             </motion.div>
