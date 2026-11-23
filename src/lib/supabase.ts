@@ -107,7 +107,20 @@ export async function getGalleryImages(): Promise<GalleryItem[]> {
     const cached = localStorage.getItem(LOCAL_STORAGE_GALLERY_KEY);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed: GalleryItem[] = JSON.parse(cached);
+        const fixed = parsed.map(item => {
+          if (item.id === 'gal-3' && item.url.includes('photo-1544551763-46a013bb70d5')) {
+            return {
+              ...item,
+              url: '/images/chalutier-peche.jpg',
+              title_fr: 'Bateaux de Pêche & Remontée des Filets',
+              title_ar: 'مراكب الصيد وشباك الصيد في أعالي البحار',
+              category: 'Pêche en Mer',
+            };
+          }
+          return item;
+        });
+        return fixed;
       } catch (e) {
         console.error(e);
       }

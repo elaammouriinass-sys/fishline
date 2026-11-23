@@ -199,10 +199,10 @@ export const initialGallery: GalleryItem[] = [
   },
   {
     id: "gal-3",
-    url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
-    title_fr: "Sélection & Calibrage Rigoureux",
-    title_ar: "فرز وتدريج دقيق للأسماك",
-    category: "Transformation",
+    url: "/images/chalutier-peche.jpg",
+    title_fr: "Bateaux de Pêche & Remontée des Filets",
+    title_ar: "مراكب الصيد وشباك الصيد في أعالي البحار",
+    category: "Pêche en Mer",
   },
   {
     id: "gal-4",
